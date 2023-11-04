@@ -36,7 +36,7 @@ const Hero = () => {
         transition={{ type: "tween", duration: 0.5 }}
         className="md:w-1/2"
       >
-        <p className="font-bold lg:text-7xl md:text-3xl text-4xl my-8">
+        <p className="font-bold lg:text-6xl md:text-3xl text-4xl my-8">
           Webinar software for the modern marketer
         </p>
         <div className="lg:text-xl md:text-base text-sm">
