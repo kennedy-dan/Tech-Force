@@ -84,7 +84,7 @@ const Testimonials = () => {
                   <img src="/svg/star.svg" alt="testimonial" />
                 </div>
                 <div className="py-4">
-                  <em className="font-semibold text-sm">"{testimony.text}"</em>
+                  <em className="font-semibold text-sm">{testimony.text}</em>
                 </div>
                 <p className="md:text-base text-sm">{testimony.name}</p>
               </div>

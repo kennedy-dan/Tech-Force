@@ -97,7 +97,7 @@ const Features = () => {
           transition={{ type: "tween", duration: 0.4 }}
           className="mt-6 md:text-base text-sm"
         >
-          Manage your webinar experience from start to finish with Welcome's
+          Manage your webinar experience from start to finish with Welcome
           webinar software.
         </motion.p>
       </div>
