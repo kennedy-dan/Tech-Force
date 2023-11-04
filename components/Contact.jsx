@@ -39,7 +39,7 @@ const Contact = () => {
           This is your direct line to our team, where your messages are valued
         </p>
         <input placeholder="Email" className="w-full py-4 px-3 mt-10" />
-        <textarea placeholder="Message*" className="w-full mt-4 px-3" cols={40} rows={6} />
+        <textarea placeholder="Message*" className="w-full mt-4 py-4 px-3" cols={40} rows={6} />
 
         <button className="w-full text-white bg-black py-4 mt-8">Submit</button>
       </div>
