@@ -34,7 +34,7 @@ const Footer = () => {
         <div className="md:mt-0 mt-6">
           <p>TRENDING POSTS</p>
           <div className="text-sm">
-            <p className="text-slate-500 pt-3">Welcome's Next Evolution</p>
+            <p className="text-slate-500 pt-3">Welcome Next Evolution</p>
             <p className="text-slate-500 pt-3">Webinars and Content at Scale</p>
             <p className="text-slate-500 pt-3">Growth Marketing</p>
             <p className="text-slate-500 pt-3">Demand Generation</p>
