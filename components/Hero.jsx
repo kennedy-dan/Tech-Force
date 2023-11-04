@@ -55,7 +55,7 @@ const Hero = () => {
         className="md:w-1/2 md:mt-0 mt-14"
         style={{ backgroundImage: `url('/svg/new.svg')` }}
       >
-        <img src="/svg/herosvg.svg" />
+        <img src="/svg/herosvg.svg" alt='hero image' />
       </div>
     </div>
   );

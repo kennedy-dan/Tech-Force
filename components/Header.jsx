@@ -9,7 +9,7 @@ const Header = () => {
 
   return (
     <div className="flex lg:mx-14 mx-4  items-center h-[60px] justify-between">
-      <img src="/svg/logo.svg" />
+      <img src="/svg/logo.svg" alt='logo' />
       <div className="w-8">
         <AiOutlineMenu
           onClick={() => setIsOpen(true)}

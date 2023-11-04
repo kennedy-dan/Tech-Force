@@ -41,7 +41,7 @@ const Contact = () => {
         <input placeholder="Email" className="w-full py-4 px-3 mt-10" />
         <textarea placeholder="Message*" className="w-full mt-4 px-3" cols={40} rows={6} />
 
-        <button className="w-full text-white bg-black py-4 mt-8">Submmit</button>
+        <button className="w-full text-white bg-black py-4 mt-8">Submit</button>
       </div>
     </div>
   );

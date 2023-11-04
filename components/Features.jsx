@@ -35,9 +35,9 @@ const WebinarFeatures = ({
       <div>
         <p className="font-bold text-2xl">{infotext}</p>
         <div className="pt-10">
-          {featureContent.map((feature) => (
-            <div className="flex items-center mb-4">
-              <img src={feature.svg} />
+          {featureContent.map((feature, index) => (
+            <div key={index} className="flex items-center mb-4">
+              <img alt='featues' src={feature.svg} />
               <p className="ml-6">{feature.featuretext}</p>
             </div>
           ))}
@@ -45,7 +45,7 @@ const WebinarFeatures = ({
         </div>
       </div>
       <div>
-        <img src={img} className="h-96" />
+        <img src={img} alt='features' className="h-96" />
       </div>
     </div>
   );
@@ -103,11 +103,11 @@ const Features = () => {
       </div>
 
       <div className="md:flex justify-center font-bold items-center text-white text-center w-full py-6 mt-9 bg-black rounded-3xl">
-        {features.map((data) => (
-          <div className="flex w-full md:mt-0 mt-9 mx-auto justify-end ">
+        {features.map((data, index) => (
+          <div key={index} className="flex w-full md:mt-0 mt-9 mx-auto justify-end ">
             <div>
               <div className="flex w-full justify-center">
-                <img src={data.img} className="w-20 h-20 object-contain" />
+                <img alt='features image' src={data.img} className="w-20 h-20 object-contain" />
               </div>
               <p className="font-bold lg:text-3xl md:text:2xl text-xl py-6">
                 {data.name}

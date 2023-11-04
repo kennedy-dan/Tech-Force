@@ -70,12 +70,18 @@ const Testimonials = () => {
             }`}
           >
             <div className="flex">
-              <img src={testimony.img} className="w-20 h-10 object-contain" />
+              <img
+                src={testimony.img}
+                alt="testimonial"
+                className="w-20 h-10 object-contain"
+              />
               <div className="ml-6">
                 <div className="flex">
-                  <img src="/svg/star.svg" />
-                  <img src="/svg/star.svg" /> <img src="/svg/star.svg" />
-                  <img src="/svg/star.svg" /> <img src="/svg/star.svg" />
+                  <img src="/svg/star.svg" alt="testimonial" />
+                  <img src="/svg/star.svg" alt="testimonial" />{" "}
+                  <img src="/svg/star.svg" alt="testimonial" />
+                  <img src="/svg/star.svg" alt="testimonial" />{" "}
+                  <img src="/svg/star.svg" alt="testimonial" />
                 </div>
                 <div className="py-4">
                   <em className="font-semibold text-sm">"{testimony.text}"</em>

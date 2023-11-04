@@ -59,9 +59,9 @@ const Pricing = () => {
             <p className="font-bold pt-10 pb-3 text-3xl">$500</p>
             <p>a month, billed at $6000 a year</p>
             <div className="mt-10">
-              {pricingInfo.map((data) => (
-                <div className="flex mt-2 items-center justify-between">
-                  <img src={data.svg} />
+              {pricingInfo.map((data, index) => (
+                <div key={index} className="flex mt-2 items-center justify-between">
+                  <img src={data.svg} alt='pricing' />
                   <p className="text-left">{data.title}</p>
                 </div>
               ))}
