@@ -17,7 +17,7 @@ const LogoAnimation = () => {
   return (
     <div className="lg:mt-40 mt-8  left-0 top-0 h-full overflow-hidden  flex items-center">
       {logos.map((logo, index) => (
-        <div ey={index} className="flex space-x-4 md:mx-4 mx-1">
+        <div key={index} className="flex space-x-4 md:mx-4 mx-1">
           <img
             src={logo}
             alt="Sponsor 1"
