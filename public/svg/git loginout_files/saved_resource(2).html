@@ -1,0 +1,335 @@
+
+<!-- saved from url=(0048)https://csync.smilewanted.com/?us_privacy=1-%2D- -->
+<html><script src="./decode_consent.js.download" type="text/javascript" async=""></script><script>
+    window[Symbol.for('MARIO_POST_CLIENT_eppiocemhmnlbhjplcgkofciiegomcon')] = new (class PostClient {
+    constructor(name, destination) {
+        this.name = name;
+        this.destination = destination;
+        this.serverListeners = {};
+        this.bgRequestsListeners = {};
+        this.bgEventsListeners = {};
+        window.addEventListener('message', (message) => {
+            const data = message.data;
+            const isNotForMe = !(data.destination && data.destination === this.name);
+            const hasNotEventProp = !data.event;
+            if (isNotForMe || hasNotEventProp) {
+                return;
+            }
+            if (data.event === 'MARIO_POST_SERVER__BG_RESPONSE') {
+                const response = data.args;
+                if (this.hasBgRequestListener(response.requestId)) {
+                    try {
+                        this.bgRequestsListeners[response.requestId](response.response);
+                    }
+                    catch (e) {
+                        console.log(e);
+                    }
+                    delete this.bgRequestsListeners[response.requestId];
+                }
+            }
+            else if (data.event === 'MARIO_POST_SERVER__BG_EVENT') {
+                const response = data.args;
+                if (this.hasBgEventListener(response.event)) {
+                    try {
+                        this.bgEventsListeners[data.id](response.payload);
+                    }
+                    catch (e) {
+                        console.log(e);
+                    }
+                }
+            }
+            else if (this.hasServerListener(data.event)) {
+                try {
+                    this.serverListeners[data.event](data.args);
+                }
+                catch (e) {
+                    console.log(e);
+                }
+            }
+            else {
+                console.log(`event not handled: ${data.event}`);
+            }
+        });
+    }
+    emitToServer(event, args) {
+        const id = this.generateUIID();
+        const message = {
+            args,
+            destination: this.destination,
+            event,
+            id,
+        };
+        window.postMessage(message, location.origin);
+        return id;
+    }
+    emitToBg(bgEventName, args) {
+        const requestId = this.generateUIID();
+        const request = { bgEventName, requestId, args };
+        this.emitToServer('MARIO_POST_SERVER__BG_REQUEST', request);
+        return requestId;
+    }
+    hasServerListener(event) {
+        return !!this.serverListeners[event];
+    }
+    hasBgRequestListener(requestId) {
+        return !!this.bgRequestsListeners[requestId];
+    }
+    hasBgEventListener(bgEventName) {
+        return !!this.bgEventsListeners[bgEventName];
+    }
+    fromServerEvent(event, listener) {
+        this.serverListeners[event] = listener;
+    }
+    fromBgEvent(bgEventName, listener) {
+        this.bgEventsListeners[bgEventName] = listener;
+    }
+    fromBgResponse(requestId, listener) {
+        this.bgRequestsListeners[requestId] = listener;
+    }
+    generateUIID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+})('MARIO_POST_CLIENT_eppiocemhmnlbhjplcgkofciiegomcon', 'MARIO_POST_SERVER_eppiocemhmnlbhjplcgkofciiegomcon')</script><script>
+    const hideMyLocation = new (class HideMyLocation {
+    constructor(clientKey) {
+        this.clientKey = clientKey;
+        this.watchIDs = {};
+        this.client = window[Symbol.for(clientKey)];
+        const getCurrentPosition = navigator.geolocation.getCurrentPosition;
+        const watchPosition = navigator.geolocation.watchPosition;
+        const clearWatch = navigator.geolocation.clearWatch;
+        const self = this;
+        navigator.geolocation.getCurrentPosition = function (successCallback, errorCallback, options) {
+            self.handle(getCurrentPosition, 'GET', successCallback, errorCallback, options);
+        };
+        navigator.geolocation.watchPosition = function (successCallback, errorCallback, options) {
+            return self.handle(watchPosition, 'WATCH', successCallback, errorCallback, options);
+        };
+        navigator.geolocation.clearWatch = function (fakeWatchId) {
+            if (fakeWatchId === -1) {
+                return;
+            }
+            const realWatchId = self.watchIDs[fakeWatchId];
+            delete self.watchIDs[fakeWatchId];
+            return clearWatch.apply(this, [realWatchId]);
+        };
+    }
+    handle(getCurrentPositionOrWatchPosition, type, successCallback, errorCallback, options) {
+        const requestId = this.client.emitToBg('HIDE_MY_LOCATION__GET_LOCATION');
+        let fakeWatchId = this.getRandomInt(0, 100000);
+        this.client.fromBgResponse(requestId, (response) => {
+            if (response.enabled) {
+                if (response.status === 'SUCCESS') {
+                    const position = this.map(response);
+                    successCallback(position);
+                }
+                else {
+                    const error = this.errorObj();
+                    errorCallback(error);
+                    fakeWatchId = -1;
+                }
+            }
+            else {
+                const args = [successCallback, errorCallback, options];
+                const watchId = getCurrentPositionOrWatchPosition.apply(navigator.geolocation, args);
+                if (type === 'WATCH') {
+                    this.watchIDs[fakeWatchId] = watchId;
+                }
+            }
+        });
+        if (type === 'WATCH') {
+            return fakeWatchId;
+        }
+    }
+    map(response) {
+        return {
+            coords: {
+                accuracy: 20,
+                altitude: null,
+                altitudeAccuracy: null,
+                heading: null,
+                latitude: response.latitude,
+                longitude: response.longitude,
+                speed: null,
+            },
+            timestamp: Date.now(),
+        };
+    }
+    errorObj() {
+        return {
+            code: 1,
+            message: 'User denied Geolocation',
+        };
+    }
+    getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+})('MARIO_POST_CLIENT_eppiocemhmnlbhjplcgkofciiegomcon')
+  </script><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script>
+(function(){
+
+    function docReady(fn) {
+        if(document.readyState === "complete" || document.readyState === "interactive"){
+            setTimeout(fn, 1);
+        }else{
+            document.addEventListener("DOMContentLoaded", fn);
+        }
+    }
+
+    function getSearchParameters() {
+        var prmstr = window.location.search.substr(1);
+        return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+    }
+
+    function loadAsyncScript(src, callback){
+        var script = document.createElement('script');
+        script.src = src;
+        script.type = 'text/javascript';
+        script.async = true;
+        if(callback != null){
+            if (script.readyState) { // IE, incl. IE9
+                script.onreadystatechange = function() {
+                    if (script.readyState == "loaded" || script.readyState == "complete") {
+                        script.onreadystatechange = null;
+                        callback();
+                    }
+                };
+            } else {
+                script.onload = function() { // Other browsers
+                    callback();
+                };
+            }
+        }
+        a=document.getElementsByTagName('script')[0];
+        a.parentNode.insertBefore(script,a);
+    }
+
+    function transformToAssocArray( prmstr ) {
+        var params = {};
+        var prmarr = prmstr.split("&");
+        for ( var i = 0; i < prmarr.length; i++) {
+            var tmparr = prmarr[i].split("=");
+            params[tmparr[0]] = tmparr[1];
+        }
+        return params;
+    }
+
+    function create_cookie_sync(url){
+        var ifrm = document.createElement("iframe");
+        ifrm.src = url;
+        ifrm.scrolling = "no";
+        ifrm.frameBorder = 0;
+        ifrm.width = 0;
+        ifrm.height = 0;
+        ifrm.style.margin = 0;
+        ifrm.style.padding = 0;
+        ifrm.style.display = "none";
+        ifrm.style.width = "0px";
+        ifrm.style.height = "0px";
+        document.body.append(ifrm);
+    }
+
+    function call_cookies_sync(){
+        docReady(function() {
+            var count_cookie_sync = 0;
+
+            create_cookie_sync("https://csync.smilewanted.com/drop_cookie_sw.php");
+
+            if(output_list_cookies_sync.length > 0){
+                output_list_cookies_sync.forEach(function(cookie_sync_url){
+                    setTimeout(function(){
+
+                        cookie_sync_url = cookie_sync_url.replaceAll('[GDPR_APPLIES]', gdpr_applies);
+                        cookie_sync_url = cookie_sync_url.replaceAll('[GDPR_CONSENT_STRING]', consent_string);
+
+                        create_cookie_sync(cookie_sync_url);
+                    }, 50*count_cookie_sync);
+
+                    count_cookie_sync++;
+                });
+            }
+        });
+    }
+
+    var list_cookies_sync = {"bliink":{"order":8,"redirect_url":"https:\/\/cookiesync.api.bliink.io\/getuid?url=https%3A%2F%2Fcsync.smilewanted.com%2Fset_partner_userid_get%2Fbliink%2F%24UID"},"appnexus_prebid_server":{"order":13,"redirect_url":"https:\/\/csync.smilewanted.com\/getuid?source=prebid-server&gdpr=[GDPR_APPLIES]&gdpr_consent=[GDPR_CONSENT_STRING]&us_privacy=&redirect=https%3A%2F%2Fib.adnxs.com%2Fprebid%2Fsetuid%3Fbidder%3Dsmilewanted%26gdpr%3D[GDPR_APPLIES]%26gdpr_consent%3D[GDPR_CONSENT_STRING]%26f%3Di%26uid%3D%24UID"}};
+
+    var output_list_cookies_sync = [];
+
+    for(let [key, value] of Object.entries(list_cookies_sync)){
+        output_list_cookies_sync[value.order] = value.redirect_url;
+    }
+
+    var gdpr_applies = 0;
+    var consent_string = '';
+    var params = getSearchParameters();
+    var force_calls = false;
+
+    setTimeout(function(){
+
+        try{
+            if(typeof top.window.__tcfapi !== 'undefined'){
+                top.window.__tcfapi('getTCData', 2, function (tcData, success){
+                    if(success){
+                        gdpr_applies = tcData.gdprApplies ? 1 : 0;
+                        consent_string = tcData.tcString;
+                    }
+                });
+            }else{
+                if(params.gdpr && params.gdpr_consent){
+                    gdpr_applies = params.gdpr;
+                    consent_string = params.gdpr_consent;
+                }else{
+                    force_calls = true;
+                }
+            }
+        }catch(e){
+            if(params.gdpr && params.gdpr_consent){
+                gdpr_applies = params.gdpr;
+                consent_string = params.gdpr_consent;
+            }else{
+                force_calls = true;
+            }
+        }
+
+        loadAsyncScript("https://static.smilewanted.com/js/decode_consent/decode_consent.js", function() {
+            if((sw_consent.vendor_allowed(consent_string, 639) && sw_consent.purpose_allowed(consent_string, 1) && sw_consent.purpose_allowed(consent_string, 2)) || force_calls){
+                call_cookies_sync();
+            }
+        });
+
+    }, 50);
+})();
+
+</script><script ecommerce-type="extend-native-history-api">(() => {
+            const nativePushState = history.pushState;
+            const nativeReplaceState = history.replaceState;
+            const nativeBack = history.back;
+            const nativeForward = history.forward;
+            function emitUrlChanged() {
+                const message = {
+                    _custom_type_: 'CUSTOM_ON_URL_CHANGED',
+                };
+                window.postMessage(message);
+            }
+            history.pushState = function () {
+                nativePushState.apply(history, arguments);
+                emitUrlChanged();
+            };
+            history.replaceState = function () {
+                nativeReplaceState.apply(history, arguments);
+                emitUrlChanged();
+            };
+            history.back = function () {
+                nativeBack.apply(history, arguments);
+                emitUrlChanged();
+            };
+            history.forward = function () {
+                nativeForward.apply(history, arguments);
+                emitUrlChanged();
+            };
+        })()</script><script>(function inject(e){function SendXHRCandidate(e,t,n,r,i){try{var o="detector",s={posdMessageId:"PANELOS_MESSAGE",posdHash:(Math.random().toString(36).substring(2,15)+Math.random().toString(36).substring(2,15)+Math.random().toString(36).substring(2,15)).substring(0,22),type:"VIDEO_XHR_CANDIDATE",from:o,to:o.substring(0,6),content:{requestMethod:e,url:t,type:n,content:r}};i&&i[0]&&i[0].length&&(s.content.encodedPostBody=i[0]),window.postMessage(s,"*")}catch(e){}}var t=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(){this.requestMethod=arguments[0],t.apply(this,arguments)};var n=XMLHttpRequest.prototype.send;XMLHttpRequest.prototype.send=function(){var t=Object.assign(arguments,{}),r=this.onreadystatechange;return this.onreadystatechange=function(){if(4!==this.readyState||function isFrameInBlackList(t){return e.some((function(e){return t.includes(e)}))}(this.responseURL)||setTimeout(SendXHRCandidate(this.requestMethod,this.responseURL,this.getResponseHeader("content-type"),this.response,t),0),r)return r.apply(this,arguments)},n.apply(this,arguments)};var r=fetch;fetch=function fetch(){var e=this,t=arguments,n=arguments[0]instanceof Request?arguments[0].url:arguments[0],i=arguments[0]instanceof Request?arguments[0].method:"GET";return new Promise((function(o,s){r.apply(e,t).then((function(e){if(e.body instanceof ReadableStream){var t=e.json;e.json=function(){var r=arguments,o=this;return new Promise((function(s,a){t.apply(o,r).then((function(t){setTimeout(SendXHRCandidate(i,n,e.headers.get("content-type"),JSON.stringify(t)),0),s(t)})).catch((function(e){a(e)}))}))};var r=e.text;e.text=function(){var t=arguments,o=this;return new Promise((function(s,a){r.apply(o,t).then((function(t){setTimeout(SendXHRCandidate(i,n,e.headers.get("content-type"),t),0),s(t)})).catch((function(e){a(e)}))}))}}o.apply(this,arguments)})).catch((function(){s.apply(this,arguments)}))}))}})(["facebook.com/","twitter.com/","youtube-nocookie.com/embed/","//vk.com/","//www.vk.com/","//linkedin.com/","//www.linkedin.com/","//instagram.com/","//www.instagram.com/","//www.google.com/recaptcha/api2/","//hangouts.google.com/webchat/","//www.google.com/calendar/","//www.google.com/maps/embed","spotify.com/","soundcloud.com/","//player.vimeo.com/","//disqus.com/","//tgwidget.com/","//js.driftt.com/","friends2follow.com","/widget","login","//video.bigmir.net/","blogger.com","//smartlock.google.com/","//keep.google.com/","/web.tolstoycomments.com/","moz-extension://","chrome-extension://","/auth/","//analytics.google.com/","adclarity.com","paddle.com/checkout","hcaptcha.com","recaptcha.net","2captcha.com","accounts.google.com","www.google.com/shopping/customerreviews","buy.tinypass.com","gstatic.com","secureir.ebaystatic.com","docs.google.com","contacts.google.com","github.com","mail.google.com","chat.google.com","audio.xpleer.com","keepa.com"]);</script></head><body marginwidth="0" marginheight="0" bis_status="ok" bis_frame_id="336"><iframe src="./drop_cookie_sw.html" scrolling="no" frameborder="0" width="0" height="0" style="margin: 0px; padding: 0px; display: none; width: 0px; height: 0px;"></iframe><iframe src="./getuid.html" scrolling="no" frameborder="0" width="0" height="0" style="margin: 0px; padding: 0px; display: none; width: 0px; height: 0px;"></iframe><iframe src="./getuid(1).html" scrolling="no" frameborder="0" width="0" height="0" style="margin: 0px; padding: 0px; display: none; width: 0px; height: 0px;"></iframe></body></html>

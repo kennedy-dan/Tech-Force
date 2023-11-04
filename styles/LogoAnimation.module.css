@@ -1,0 +1,29 @@
+@keyframes slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  25% {
+    transform: translateX(0%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  75% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.sponsor_logo {
+  animation: slide 6s linear infinite;
+}
+
+.sponsor_logo:first-child {
+  animation-delay: 5s;
+}
+
+.sponsor_logo:not(:first-child) {
+  animation-delay: 6s;
+}
